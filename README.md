@@ -1,4 +1,4 @@
-# gis-group
+# gis-19-20
 group project for geographic information system-WS2019
 
 ### Here are some commands I used to use. Not totally correct but you can have a try.
@@ -8,16 +8,15 @@ group project for geographic information system-WS2019
 - change directory to where you want to put this project
 example:  cd git 
 - then clone the project
-example: git clone https://github.com/jiaxinli0907/gis-group/
+example: git clone https://github.com/jiaxinli0907/gis-ws-19-20
 - Then fetch from the repository: git fetch —all
 - git stauts
 it should be:
-On branch master
---------
-Your branch is up to date with 'origin/master'.
 
+On branch master
+Your branch is up to date with 'origin/master'.
 nothing to commit, working tree clean
----------
+
 ### step 2: create you own branch
 - git checkout -b <your branch name>
 example: git checkout -b jiaxin
