@@ -39,6 +39,11 @@ export class DataService {
     return this.http.post<FeatureCollection>(url, null, httpOptions);
   }
 
+  getComparisiontask(): Observable<FeatureCollection> {
+    const url = 'http://localhost:5000/api/data/comparisiontask';
+    return this.http.post<FeatureCollection>(url, null, httpOptions);
+  }
+
   /**
    * Retrieves the data and constructs a FeatureCollection object from the received data
    */

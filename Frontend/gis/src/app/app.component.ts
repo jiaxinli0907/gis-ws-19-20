@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from './services/data.service';
 import { FeatureCollection } from 'geojson';
-import { Overlay, LandkreisLayer, BardichteLayer } from './types/map.types';
-
+import { Overlay, LandkreisLayer, BardichteLayer, ComparisiontaskLayer } from './types/map.types';
 
 
 @Component({
@@ -31,6 +30,9 @@ export class AppComponent implements OnInit {
 
     this.dataService.getBardichte().toPromise().then((val: FeatureCollection) => {
       this.overlays.push(new BardichteLayer('Bardichte', val));
+    });
+    this.dataService.getComparisiontask().toPromise().then((val: FeatureCollection) => {
+      this.overlays.push(new ComparisiontaskLayer('Comparisiontask', val));
     });
   }
 }
