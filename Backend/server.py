@@ -114,3 +114,41 @@ def bardichte():
                     status=200,
                     mimetype="application/json")
     return(resp)
+
+@app.route('/api/data/comparisiontask', methods=["POST"])
+def comparisiontask():
+    query = """
+        select points.osm_id as id, st_asgeojson(points.way) as pointway
+        from planet_osm_point points
+        limit 20
+    """
+
+    with psycopg2.connect(host=DB_HOST, port=DB_PORT, user=DB_USER, password=DB_PASS, dbname=DB_NAME) as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.NamedTupleCursor) as cur:
+            cur.execute(query)
+            records = cur.fetchall()
+
+    features = []
+    for r in records:
+        feature = {
+            "type": 'Feature',
+            # careful! r.geojson is of type str, we must convert it to a dictionary
+            "properties": {
+                "id": r.id,
+                "pointway": json.loads(r.pointway)
+                # "coord":r.pointway.coordinates
+            }
+        }
+
+        features.append(feature)
+
+    featurecollection = {
+        "type": "FeatureCollection",
+        "features": features
+    }
+
+    resp = Response(response=json.dumps(featurecollection),
+                    status=200,
+                    mimetype="application/json")
+    return(resp)
+    

@@ -163,4 +163,76 @@ class BardichteLayer extends Overlay {
     }
 }
 
-export { Overlay, LandkreisLayer, BardichteLayer };
+class ComparisiontaskLayer extends Overlay {
+
+    constructor(name: string, featureCollection: FeatureCollection) {
+        super(name, featureCollection);
+    }
+
+    createOverlay() {
+        // calculate new color scale
+        // .domain expects an array of [min, max] value
+        // d3.extent returns exactly this array
+        const minMaxBars = d3.extent(this.featureCollection.features.map(d => d.properties.id));//d.properties.num_bars
+        const colorScale = d3.scaleSequential(d3.interpolateReds).domain(minMaxBars);
+
+        // create tooltip
+        const tooltip = d3.select('body')
+            .append('div')
+            .attr('id', 'comparision-tooltip')
+            .attr('class', 'map-tooltip')
+            .style('display', 'none');
+
+        tooltip.append('h3').text('comparision result:');
+        const nameP = tooltip.append('p');
+        const areaP = tooltip.append('p');
+
+        // create geojson layer (looks more complex than it is)
+        const comparisiontaskLayer = L.geoJSON(this.featureCollection, {
+            style: (feature) => {
+                return {
+                    fillColor: colorScale(feature.properties.id), //feature.properties.num_bars
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: 0.7
+                };
+            },
+            onEachFeature: (feature, layer) => {
+                layer.on({
+                    // on mouseover update tooltip and highlight county
+                    mouseover: (e: L.LeafletMouseEvent) => {
+
+                        // set position and text of tooltip
+                        tooltip.style('display', null);
+                        tooltip.style('top', `${e.originalEvent.clientY - 75}px`);
+                        tooltip.style('left', `${e.originalEvent.clientX + 25}px`);
+                        nameP.text(`id: ${feature.properties.id}`); //${feature.properties.name}
+                        areaP.text(`coordinate: ${feature.properties.pointway}`); // ${feature.properties.num_bars}
+
+                        // set highlight style
+                        const l = e.target;
+                        l.setStyle({
+                            weight: 5,
+                            color: '#666',
+                            dashArray: '',
+                            fillOpacity: 0.7
+                        });
+
+                        l.bringToFront();
+                    },
+                    // on mouseover hide tooltip and reset county to normal sytle
+                    mouseout: (e: L.LeafletMouseEvent) => {
+                        tooltip.style('display', 'none');
+                        comparisiontaskLayer.resetStyle(e.target);
+                    }
+                });
+            }
+        });
+
+        return comparisiontaskLayer;
+    }
+}
+
+export { Overlay, LandkreisLayer, BardichteLayer ,ComparisiontaskLayer};
