@@ -148,7 +148,8 @@ export function lineAndLine(p11:mypoint,p12:mypoint,p21:mypoint,p22:mypoint){
     }
     return ifin
 }
-interface mypoint{
+
+export interface mypoint{
     x: number;
     y: number
 }

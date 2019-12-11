@@ -2,7 +2,7 @@ import { FeatureCollection } from 'geojson';
 
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-import {pointToLine, pointInPolygon,  lineAndLine,polygonAndPolygon} from '../userdefinefunc/comparefunc'
+import {pointToLine, pointInPolygon,  lineAndLine,polygonAndPolygon, mypoint} from '../userdefinefunc/comparefunc'
 
 class Overlay {
 
@@ -17,6 +17,7 @@ class Overlay {
     createOverlay() {
         return L.geoJSON(this.featureCollection);
     }
+
 }
 
 class LandkreisLayer extends Overlay {
