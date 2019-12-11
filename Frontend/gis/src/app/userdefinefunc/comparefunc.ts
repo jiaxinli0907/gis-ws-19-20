@@ -1,3 +1,4 @@
+import { max } from 'rxjs/operators';
 
 // class Compare{
 //     pp0:mypoint
@@ -39,31 +40,40 @@ export function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
 
 export function pointInPolygon(p0:mypoint, pl:mypoint[]){
     let ifin: number //ifin = 0 outside ifin = 1 inside ifin = 2 on the edge
+    let dist: number
+    let d: number
     ifin = 0
     pl.push(pl[0])
     for(var i=0; i < pl.length-1; i++){
         if(pl[i].y == pl[i+1].y && pl[i].y == p0.y){ //the ray is overlap with segment
-            if(pl[i].x<p0.x || p0.x <pl[i+1].x){ // p0 in a segment
+            if(p0.x < Math.max(pl[i].x, pl[i+1].x) && p0.x > Math.min(pl[i].x, pl[i+1].x)){ // p0 in a segment
                 ifin = 2
+                dist = 0
             }
-            if(pl[i+1].x<p0.x || p0.x <pl[i].x){
+
+            if(pl[i].x==p0.x || p0.x == pl[i+1].x){ //p0 is a vertex
                 ifin = 2
+                dist = 0
             }
-            if(pl[i].x==p0.x && p0.y ==pl[i].y){ //p0 is a vertex
-                ifin = 2
-            }
-            if(pl[i+1].x==p0.x && p0.y ==pl[i+1].y){
-                ifin = 2
-            } 
-            if(p0.x < Math.min(pl[i].x,pl[i+1].x) || p0.x > Math.max(pl[i].x,pl[i+1].x)){ //p0 is in theoutside
+      
+            if(p0.x < Math.min(pl[i].x,pl[i+1].x) || p0.x > Math.max(pl[i].x,pl[i+1].x)){ //p0 is in the outside
                 ifin = 1
+                dist = Math.min(Math.abs(p0.x - pl[i].x),Math.abs(p0.x - pl[i+1].x))
             }     
         }
         if(p0.y> Math.min(pl[i].y,pl[i+1].y) && p0.y< Math.max(pl[i].y,pl[i+1].y)){
             ifin = 1
+            for(i=0; i <pl.length-1; i++){
+                d = pointToLine(p0,pl[i],pl[i+1])
+                if(d < dist){
+                    dist = d
+                }
+
+            }
+            
         }      
     }
-    return ifin
+    return [ifin,dist]
 }
 
 export function polygonAndPolygon(pl1:mypoint[],pl2:mypoint[]){
@@ -114,15 +124,15 @@ export function polygonAndPolygon(pl1:mypoint[],pl2:mypoint[]){
     }
 
     for(let node of pl1){
-        let i = pointInPolygon(node, pl2)
-        if(i!=0){
+        let p = pointInPolygon(node, pl2)[0]
+        if(p!=0){
             ifin = true
         }
     }
 
     for(let node of pl2){
-        let i = pointInPolygon(node, pl1)
-        if(i!=0){
+        let p = pointInPolygon(node, pl1)[0]
+        if(p!=0){
             ifin = true
         }
     }
@@ -130,13 +140,19 @@ export function polygonAndPolygon(pl1:mypoint[],pl2:mypoint[]){
 }
 
 export function lineAndLine(p11:mypoint,p12:mypoint,p21:mypoint,p22:mypoint){
-    let ifin:boolean = false
+    let ifin:boolean = false // if intersection
+    let dist:number // distance between two line
+    let d:number
     let t1_denominator = (p11.x-p12.x)*(p21.y-p22.y) - (p21.x - p22.x)*(p11.y - p12.y)
     let t2_denominator = (p21.x-p22.x)*(p11.y-p12.y) - (p11.x - p12.x)*(p21.y - p22.y)
 
     if(t1_denominator ==0 || t2_denominator==0){
         if((p21.y-p11.y)/(p21.x-p11.x) == (p12.y-p11.y)/(p12.x-p11.x)) {//overlap
             ifin =  true
+            dist = 0
+        }
+        else {
+            dist = Math.sqrt((p21.x-p11.x)^2 + (p21.y-p11.y)^2)
         }
     }
     else{
@@ -144,9 +160,28 @@ export function lineAndLine(p11:mypoint,p12:mypoint,p21:mypoint,p22:mypoint){
         let t2 = (p21.x-p11.x)*(p11.y-p12.y) - (p11.x - p12.x)*(p21.y - p11.y)/t2_denominator
         if(t1>=0 && t1 <=1 && t2>=0 && t2<=1){
             ifin = true  
+            dist = 0
+        }
+        else{
+            d = pointToLine(p11,p21,p22)
+            if(d < dist){
+                dist = d
+            }
+            d = pointToLine(p12,p21,p22)
+            if(d < dist){
+                dist = d
+            }
+            d = pointToLine(p21,p11,p12)
+            if(d < dist){
+                dist = d
+            }
+            d = pointToLine(p22,p11,p12)
+            if(d < dist){
+                dist = d
+            }
         }
     }
-    return ifin
+    return [ifin,dist]
 }
 
 export interface mypoint{
