@@ -1,32 +1,29 @@
 
-class Compare{
-    pp0:mypoint
-    pl1:Array<mypoint>
-    pl2:Array<mypoint>
-    constructor(public pointlist1:Array<mypoint>,public pointlist2:Array<mypoint>){
-        this.pl1 = pointlist1
-        this.pl2 = pointlist2
-    }
+// class Compare{
+//     pp0:mypoint
+//     pl1:Array<mypoint>
+//     pl2:Array<mypoint>
+//     constructor(public pointlist1:Array<mypoint>,public pointlist2:Array<mypoint>){
+//         this.pl1 = pointlist1
+//         this.pl2 = pointlist2
+//     }
 
+//     getPointToLine(): number {
+//         return pointToLine(this.pl1[0],this.pl2[0],this.pl2[1]) ;
+//     }
+//     getPointInPolygon(): number {
+//         return pointInPolygon(this.pl1[0],this.pl2);//ifin = 0 outside ifin = 1 inside ifin = 2 on the edge
+//     }
+//     getPolygonAndPolygon():boolean{
+//         return polygonAndPolygon(this.pl1, this.pl2);
+//     }
+//     getLineAndLine():boolean{
+//         return lineAndLine(this.pl1[0],this.pl1[1],this.pl2[0],this.pl2[1])
+//     }
 
-    // pl1 = [this.pp1,this.pp2] //point list
-    // pl2 = [this.pp2,this.pp1]
-    getPointToLine(): number {
-        return pointToLine(this.pl1[0],this.pl2[0],this.pl2[1]) ;
-    }
-    getPointInPolygon(): number {
-        return pointInPolygon(this.pl1[0],this.pl2);//ifin = 0 outside ifin = 1 inside ifin = 2 on the edge
-    }
-    getPolygonAndPolygon():boolean{
-        return polygonAndPolygon(this.pl1, this.pl2);
-    }
-    getLineAndLine():boolean{
-        return lineAndLine(this.pl1[0],this.pl1[1],this.pl2[0],this.pl2[1])
-    }
+// }
 
-}
-
-function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
+export function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
     let ifVertical: boolean
     let d: number // the shorest distance from a point to the line
     let u: number[] = [p0.x-p1.x, p0.y-p1.y];
@@ -40,7 +37,7 @@ function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
     return d
 }
 
-function pointInPolygon(p0:mypoint, pl:mypoint[]){
+export function pointInPolygon(p0:mypoint, pl:mypoint[]){
     let ifin: number //ifin = 0 outside ifin = 1 inside ifin = 2 on the edge
     ifin = 0
     pl.push(pl[0])
@@ -69,7 +66,7 @@ function pointInPolygon(p0:mypoint, pl:mypoint[]){
     return ifin
 }
 
-function polygonAndPolygon(pl1:mypoint[],pl2:mypoint[]){
+export function polygonAndPolygon(pl1:mypoint[],pl2:mypoint[]){
     let ifin:boolean = false //if intersection flag
     // calculate MBR
     let maxx1:number = 10000
@@ -132,7 +129,7 @@ function polygonAndPolygon(pl1:mypoint[],pl2:mypoint[]){
     return ifin
 }
 
-function lineAndLine(p11:mypoint,p12:mypoint,p21:mypoint,p22:mypoint){
+export function lineAndLine(p11:mypoint,p12:mypoint,p21:mypoint,p22:mypoint){
     let ifin:boolean = false
     let t1_denominator = (p11.x-p12.x)*(p21.y-p22.y) - (p21.x - p22.x)*(p11.y - p12.y)
     let t2_denominator = (p21.x-p22.x)*(p11.y-p12.y) - (p11.x - p12.x)*(p21.y - p22.y)
