@@ -2,7 +2,7 @@ import { FeatureCollection } from 'geojson';
 
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-
+import {pointToLine, pointInPolygon,  lineAndLine,polygonAndPolygon} from '../userdefinefunc/comparefunc'
 
 class Overlay {
 
@@ -242,43 +242,3 @@ class ComparisiontaskLayer extends Overlay {
 
 export { Overlay, LandkreisLayer, BardichteLayer, ComparisiontaskLayer};
 
-class Compare{
-    pp0:mypoint
-    pp1:mypoint
-    pp2:mypoint
-    constructor(public point0: mypoint,public point1: mypoint,public point2: mypoint){
-        this.pp0 = point0
-        this.pp1 = point1
-        this.pp2 = point2
-    }
-  
-    dist:number = pointToLine(this.pp0,this.pp1,this.pp2) ;
-
-
-}
-
-function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
-    let ifVertical: Boolean
-    let d: number // the shorest distance from a point to the line
-    let u: number[] = [p0.x-p1.x, p0.y-p1.y];
-    let v: number[] = [p2.x-p1.x, p2.y-p1.y];
-    if( u[0]*v[1]-u[1]*v[0] < 0){
-        d = Math.min(Math.sqrt((p0.x-p2.x)^2+(p0.y-p2.y)^2),Math.sqrt((p1.x-p0.x)^2+(p1.y-p0.y)^2))
-    }
-    else{
-        d = u[0]*v[1]-u[1]*v[0]/ Math.sqrt((p1.x-p2.x)^2+(p1.y-p2.y)^2)
-    }
-    return d
-}
-
-function pointInPolygon(p0:mypoint, pl:mypoint[]){
-    let ifin: Boolean
-    ifin = false
-
-    return ifin
-}
-
-interface mypoint{
-    x: number;
-    y: number
-}
