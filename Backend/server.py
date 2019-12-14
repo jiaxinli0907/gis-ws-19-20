@@ -118,9 +118,10 @@ def bardichte():
 @app.route('/api/data/comparisiontask', methods=["POST"])
 def comparisiontask():
     query = """
-        select points.osm_id as id, st_asgeojson(points.way) as pointway
-        from planet_osm_point points
-        limit 20
+        select polygons.osm_id as polygonid, polygons.name as pname, st_area(polygons.way::geography) / (1000 * 1000) as area, st_asgeojson(polygons.way) as geojson
+        from planet_osm_polygon polygons 
+        where polygons.admin_level = '6' and polygons.boundary = 'administrative' 
+  
     """
 
     with psycopg2.connect(host=DB_HOST, port=DB_PORT, user=DB_USER, password=DB_PASS, dbname=DB_NAME) as conn:
@@ -132,11 +133,12 @@ def comparisiontask():
     for r in records:
         feature = {
             "type": 'Feature',
+            "geometry": json.loads(r.geojson),
             # careful! r.geojson is of type str, we must convert it to a dictionary
             "properties": {
-                "id": r.id,
-                "pointway": json.loads(r.pointway)
-                # "coord":r.pointway.coordinates
+                "polygonid": r.polygonid,
+                "name":r.pname,
+                "area":r.area
             }
         }
 
