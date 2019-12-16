@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, ViewEncapsulation, IterableDiffers, DoCheck, IterableChangeRecord } from '@angular/core';
 
+
 import * as L from 'leaflet';
+import * as LD from 'leaflet-draw';
 import { Overlay } from '../types/map.types';
 
 @Component({
@@ -36,6 +38,7 @@ export class MapComponent implements OnInit, DoCheck {
     const baseMaps = {
       OpenStreetMap: basemap,
     };
+
 
     // add a control which lets us toggle maps and overlays
     this.layerControl = L.control.layers(baseMaps);

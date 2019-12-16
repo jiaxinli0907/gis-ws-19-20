@@ -4,13 +4,31 @@
 
   display: grid;
 
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 1fr 100px;
 
-  grid-template-areas:
-    "map"
+  grid-auto-flow: column; 
+
+
 }
 
 #map {
-  grid-area: map;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 2;
+}
+
+#navArea {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+#output {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 3;
 }
