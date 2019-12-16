@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from './services/data.service';
 import { FeatureCollection } from 'geojson';
 import { Overlay, LandkreisLayer, BardichteLayer, ComparisiontaskLayer } from './types/map.types';
+import { importExpr } from '@angular/compiler/src/output/output_ast';
 
 
 @Component({

@@ -1,4 +1,5 @@
 import { max } from 'rxjs/operators';
+import { point } from 'leaflet';
 
 // class Compare{
 //     pp0:mypoint
@@ -24,16 +25,25 @@ import { max } from 'rxjs/operators';
 
 // }
 
-export function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
-    let ifVertical: boolean
+export function pointToLine(point0: mypoint, point1:mypoint, point2: mypoint){
+    let p0:mypoint
+    let p1:mypoint
+    let p2:mypoint
+    p0 = point0
+    p1 = point1
+    p2 = point2
     let d: number // the shorest distance from a point to the line
+ 
     let u: number[] = [p0.x-p1.x, p0.y-p1.y];
     let v: number[] = [p2.x-p1.x, p2.y-p1.y];
+    // console.log("point0.x"+point0.x)
     if( u[0]*v[1]-u[1]*v[0] < 0){
         d = Math.min(Math.sqrt((p0.x-p2.x)^2+(p0.y-p2.y)^2),Math.sqrt((p1.x-p0.x)^2+(p1.y-p0.y)^2))
+        // console.log(d)
     }
     else{
         d = u[0]*v[1]-u[1]*v[0]/ Math.sqrt((p1.x-p2.x)^2+(p1.y-p2.y)^2)
+        // console.log(d)
     }
     return d
 }
