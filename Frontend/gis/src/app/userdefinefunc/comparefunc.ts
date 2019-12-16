@@ -25,13 +25,8 @@ import { point } from 'leaflet';
 
 // }
 
-export function pointToLine(point0: mypoint, point1:mypoint, point2: mypoint){
-    let p0:mypoint
-    let p1:mypoint
-    let p2:mypoint
-    p0 = point0
-    p1 = point1
-    p2 = point2
+export function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
+
     let d: number // the shorest distance from a point to the line
  
     let u: number[] = [p0.x-p1.x, p0.y-p1.y];
@@ -42,13 +37,13 @@ export function pointToLine(point0: mypoint, point1:mypoint, point2: mypoint){
         // console.log(d)
     }
     else{
-        d = u[0]*v[1]-u[1]*v[0]/ Math.sqrt((p1.x-p2.x)^2+(p1.y-p2.y)^2)
+        d = Math.abs(u[0]*v[1]-u[1]*v[0])/ Math.sqrt((p1.x-p2.x)^2+(p1.y-p2.y)^2)
         // console.log(d)
     }
     return d
 }
 
-export function pointInPolygon(p0:mypoint, pl:mypoint[]){
+export function pointInPolygon(p0:mypoint, pl:mypointarray){
     let ifin: number //ifin = 0 outside ifin = 1 inside ifin = 2 on the edge
     let dist: number
     let d: number
@@ -194,7 +189,9 @@ export function lineAndLine(p11:mypoint,p12:mypoint,p21:mypoint,p22:mypoint){
     return [ifin,dist]
 }
 
-export interface mypoint{
+export interface mypoint {
     x: number;
-    y: number
+    y: number;
 }
+
+export type mypointarray = [mypoint]

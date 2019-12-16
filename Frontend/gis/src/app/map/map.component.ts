@@ -5,7 +5,7 @@ import * as L from 'leaflet';
 import { Overlay } from '../types/map.types';
 declare const l:any
 
-import {mypoint,pointToLine} from '../userdefinefunc/comparefunc'
+import {mypoint,pointToLine,pointInPolygon,mypointarray} from '../userdefinefunc/comparefunc'
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -53,21 +53,17 @@ export class MapComponent implements OnInit, DoCheck {
 
     function onClickln(e)
     {
-      var linepoint=[]
-      var lines= L.polyline(linepoint)
-      var tempLines= L.polyline([])
-      var ls=[]
+
       linepoint.push([e.latlng.lat,e.latlng.lng])
         lines.addLatLng(e.latlng)
         mymap.addLayer(lines)
         mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
         mymap.on('mousemove',onMoveln)
-
     }
     function onMoveln(e) {
         if(linepoint.length>0) {
             ls=[linepoint[linepoint.length-1],[e.latlng.lat,e.latlng.lng]]
-            // console.log("ls:"+ls)
+            console.log("ls:"+ls)
             tempLines.setLatLngs(ls)
             mymap.addLayer(tempLines)
         }
@@ -76,20 +72,18 @@ export class MapComponent implements OnInit, DoCheck {
     function onDoubleClickln(e)
     {
         L.polyline(linepoint).addTo(mymap)
-        
+        console.log("linepoint:"+linepoint)
         linepoint=[]
         lines= L.polyline(linepoint)
         mymap.off('mousemove')
     }
 // line end
  // add polygon -- success
-
  var polygonpoint=[]
  var pl: any
  var polygonline= L.polyline([])
  var tempLines= L.polyline([])
  var ls=[]
-
  function onClickPolygon(e)
  {
   polygonpoint.push([e.latlng.lat,e.latlng.lng])
@@ -103,6 +97,7 @@ export class MapComponent implements OnInit, DoCheck {
      if(polygonpoint.length>0) {
          ls=[polygonpoint[polygonpoint.length-1],[e.latlng.lat,e.latlng.lng],polygonpoint[0]]
          tempLines.setLatLngs(ls)
+         console.log("ls polygon:"+ls)
      }
  }
  function onDoubleClickPolygon(e)
@@ -149,24 +144,51 @@ var element2  = document.getElementById ('buttonLine');
       element2.addEventListener ('click', addLine);
 
 function pointLine(){
- 
-  // let pl:mypoint[]
-
-  // for(let i=0; i < linepoint.length; i++){
-  //   pl[i]={x:linepoint[i][0],y:linepoint[i][1]}
-  // }
   let p0:mypoint = {x:point[0][0],y:point[0][1]}
   console.log("p0:"+p0.x,p0.y)
-  let p1:mypoint = {x:ls[0][0],y:ls[1][1]}
+  let p1:mypoint = {x:ls[0][0],y:ls[0][1]}
   let p2:mypoint = {x:ls[1][0],y:ls[1][1]}
   console.log("p1:"+p1.x,p1.y)
-  console.log("p1:"+p2.x,p2.y)
-  console.log("distance between the point(p1) and the line(p2p3) is:" + pointToLine(p0,p1,p2));
+  console.log("p2:"+p2.x,p2.y)
+  let d = pointToLine(p0,p1,p2)
+  console.log("distance between the point and the line is:" + d);
 }
 var element4  = document.getElementById ('pointlinecompare');
       element4.addEventListener ('click', pointLine);
+
+
+
+function pointPolygon(){
+  let pl: mypointarray
+  // let p:mypoint
+  let p0:mypoint = {x:point[0][0],y:point[0][1]}
+  console.log("p0:"+p0.x,p0.y)
+  for(let i = 0;i < ls.length;i++){
+    pl.push({x:ls[i][0],y:ls[i][1]})
+    console.log("pli:"+pl[i].x, pl[i].y)
+  }
+  let d = pointInPolygon(p0,pl)
+  console.log("relationship between a point and a polygon:");
+  if(d[0] == 0){
+    console.log("outside, the distance is:"+d[1])
+  }
+  else if(d[0]==1){
+    console.log("inside, the distanceis"+d[1])
+  }
+  else{
+    console.log("on the edge, the distanceis"+d[1])
+  }
+
+}
+var element5  = document.getElementById ('pointPolygonCompare');
+      element5.addEventListener ('click', pointPolygon);
   
   }
+
+    
+  
+
+
   /**
    * If the input data changes, update the layers
    * @param changes the angular changes object
