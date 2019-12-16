@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewEncapsulation, IterableDiffers, DoCheck, IterableChangeRecord } from '@angular/core';
-
+import 'leaflet/dist/images/marker-shadow.png';
+import 'leaflet/dist/images/marker-icon-2x.png';
 import * as L from 'leaflet';
 import { Overlay } from '../types/map.types';
 declare const l:any
@@ -8,17 +9,9 @@ import {mypoint,pointToLine} from '../userdefinefunc/comparefunc'
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css'],
+  styleUrls: ['./map.component.css']
   // super important, otherwise the defined css doesn't get added to dynamically created elements, for example, from D3.
-  encapsulation: ViewEncapsulation.None,
-  // template: `
-  // <ejs-toolbar>
-  //   <e-items>
-  //      <e-item text='Bold'  [htmlAttributes] = 'boldAttribute'></e-item>
-  //      <e-item text='Italic' [htmlAttributes] = 'italicAttribute'></e-item>
-  //   </e-items>
-  // </ejs-toolbar>
-  // `
+  // encapsulation: ViewEncapsulation.None,
 })
 export class MapComponent implements OnInit, DoCheck {
 
@@ -51,159 +44,129 @@ export class MapComponent implements OnInit, DoCheck {
     this.layerControl = L.control.layers(baseMaps);
     this.layerControl.addTo(mymap);
 
-       // add draw functions
-    //增加一个marker ，地图上的标记，并绑定了一个popup，默认打开
-    // function onMapClick(e) {
-    //   popup
-    //   .setLatLng(e.latlng)
-    //   .setContent("You clicked the map at " + e.latlng.toString())
-    //   .openOn(mymap);
-    // }
-    // mymap.on('click', onMapClick);
 
-    // L.marker([48.75981, 9.168091]).addTo(mymap)
-    //         .bindPopup("<b>Hello world!</b><br />I am a point.").openPopup();
+// add line  --success
+  var linepoint=[]
+  var lines= L.polyline(linepoint)
+  var tempLines= L.polyline([])
+  var ls=[]
 
-    // //增加多边形
-    // L.polygon([
-    //         [47.73424, 9.119504],
-    //         [48.57479, 7.723389],
-    //         [48.133101, 11.552124]
-    // ]).addTo(mymap).bindPopup("I am a polygon.");
-    // L.polyline([[49.425267, 11.063232],
-    //   [48.414619, 10.69519]]).addTo(mymap).bindPopup("I am a line");
-    // //为点击地图的事件 增加popup
-    // var popup = L.popup();
+    function onClickln(e)
+    {
+      var linepoint=[]
+      var lines= L.polyline(linepoint)
+      var tempLines= L.polyline([])
+      var ls=[]
+      linepoint.push([e.latlng.lat,e.latlng.lng])
+        lines.addLatLng(e.latlng)
+        mymap.addLayer(lines)
+        mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
+        mymap.on('mousemove',onMoveln)
 
-   
+    }
+    function onMoveln(e) {
+        if(linepoint.length>0) {
+            ls=[linepoint[linepoint.length-1],[e.latlng.lat,e.latlng.lng]]
+            // console.log("ls:"+ls)
+            tempLines.setLatLngs(ls)
+            mymap.addLayer(tempLines)
+        }
+    }
 
-// // add line  --success
-//     var points=[]
-//     var lines= L.polyline(points)
-//     var tempLines= L.polyline([])
-//     var ls=[]
-//     mymap.on('click', onClickln);  
-//     mymap.on('dblclick',onDoubleClickln);
-//     console.log("the points is:"+points)
-//     function onClickln(e)
-//     {
+    function onDoubleClickln(e)
+    {
+        L.polyline(linepoint).addTo(mymap)
+        
+        linepoint=[]
+        lines= L.polyline(linepoint)
+        mymap.off('mousemove')
+    }
+// line end
+ // add polygon -- success
 
-//         points.push([e.latlng.lat,e.latlng.lng])
-//         lines.addLatLng(e.latlng)
-//         mymap.addLayer(lines)
-//         mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
-//         mymap.on('mousemove',onMoveln)//双击地图
+ var polygonpoint=[]
+ var pl: any
+ var polygonline= L.polyline([])
+ var tempLines= L.polyline([])
+ var ls=[]
 
-//     }
-//     function onMoveln(e) {
-//         if(points.length>0) {
-//             ls=[points[points.length-1],[e.latlng.lat,e.latlng.lng]]
-//             tempLines.setLatLngs(ls)
-//             mymap.addLayer(tempLines)
-//         }
-//     }
+ function onClickPolygon(e)
+ {
+  polygonpoint.push([e.latlng.lat,e.latlng.lng])
+  polygonline.addLatLng(e.latlng)
+     mymap.addLayer(tempLines)
+     mymap.addLayer(polygonline)
+     mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
 
-//     function onDoubleClickln(e)
-//     {
-//         L.polyline(points).addTo(mymap)
-//         points=[]
-//         lines= L.polyline(points)
-//         mymap.off('mousemove')
-//     }
-
-// // add polygon -- success
-// var points=[]
-// var lines= L.polyline([])
-// var tempLines= L.polyline([])
-// var ls=[]
-
-// mymap.on('click', onClick);    //点击地图
-// mymap.on('dblclick',onDoubleClick);
-// mymap.on('mousemove',onMove)//双击地图
-
-// //map.off(....) 关闭该事件
-
-// function onClick(e)
-// {
-
-//     points.push([e.latlng.lat,e.latlng.lng])
-//     lines.addLatLng(e.latlng)
-//     mymap.addLayer(tempLines)
-//     mymap.addLayer(lines)
-//     mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
-
-// }
-// function onMove(e) {
-//     if(points.length>0) {
-//         ls=[points[points.length-1],[e.latlng.lat,e.latlng.lng],points[0]]
-//         tempLines.setLatLngs(ls)
-//         // map.addLayer(tempLines)
-//     }
-// }
-
-// function onDoubleClick(e)
-// {
-//     L.polygon(points).addTo(mymap)
-//     points=[]
-//     //map.removeLayer(tempLines)
-//     //tempLines.remove()
-//     lines.remove()
-//     tempLines.remove()
-//     lines= L.polyline([])
-// }
-
-// var point:any
-// mymap.on('click',OnClickP)
-// function OnClickP(e){
-//   point.push([e.latlng.lat,e.latlng.lng])
-//   point.addLatLng(e.latlng)
-//   mymap.addLayer(point)
-//   L.marker(point).addTo(mymap)
-//   .bindPopup("this is a point.").openPopup().setPopupContent("You clicked at " + e.latlng.toString());
-// }
-
+ }
+ function onMovePolygon(e) {
+     if(polygonpoint.length>0) {
+         ls=[polygonpoint[polygonpoint.length-1],[e.latlng.lat,e.latlng.lng],polygonpoint[0]]
+         tempLines.setLatLngs(ls)
+     }
+ }
+ function onDoubleClickPolygon(e)
+ {
+     L.polygon(polygonpoint).addTo(mymap)
+     pl = polygonpoint
+     polygonpoint=[]
+     polygonline.remove()
+     tempLines.remove()
+     polygonline= L.polyline([])
+ }
+ //polygon end
 // add marker --success
 var point = []
 function onMapClickPoint(e) {
   point.push([e.latlng.lat,e.latlng.lng])
   L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap)
         .bindPopup("I am a point.").openPopup().setPopupContent("You clicked the map at " + e.latlng.toString());
-  //  console.log(point);
-  //  mymap.on('click', onMapClick);
-   if(point.length >=3){
-    L.marker(point[point.length-2]).addTo(mymap)
-    .bindPopup("<b>Hello world!</b><br />I am a point.").openPopup();
-    let p1:mypoint = {x:point[point.length -3][0],y:point[point.length -3][1]}
-    let p2:mypoint = {x:point[point.length -2][0],y:point[point.length -2][1]}
-    let p3:mypoint = {x:point[point.length -1][0],y:point[point.length -1][1]}
-    // console.log("p1.xy "+p1.x);
-    
-    console.log("point 1 is:" + p1.x,p1.y);
-    console.log("point 2 is:" + p2.x,p2.y);
-    console.log("point 3 is:" + p3.x,p3.y);
-    console.log("distance between the point(p1) and the line(p2p3) is:" + pointToLine(p1,p2,p3));
+}
+// marker end
 
-  }
+
+ function addPoint(){
+  mymap.on('dblclick', onMapClickPoint);
+}
+function addLine(){
+  mymap.on('click', onClickln);  
+  mymap.on('dblclick',onDoubleClickln);
 }
 
-function addpoint(){
-  mymap.on('click', onMapClickPoint);
+function addPol(){
+  mymap.on('click', onClickPolygon);    
+  mymap.on('dblclick',onDoubleClickPolygon);
+  mymap.on('mousemove',onMovePolygon)
 }
 
+var element3  = document.getElementById ('buttonPol');
+      element3.addEventListener ('click', addPol);
 
+var element1  = document.getElementById ('buttonPoint');
+      element1.addEventListener ('click', addPoint);
 
+var element2  = document.getElementById ('buttonLine');
+      element2.addEventListener ('click', addLine);
 
+function pointLine(){
+ 
+  // let pl:mypoint[]
 
-
-
-
-
-
+  // for(let i=0; i < linepoint.length; i++){
+  //   pl[i]={x:linepoint[i][0],y:linepoint[i][1]}
+  // }
+  let p0:mypoint = {x:point[0][0],y:point[0][1]}
+  console.log("p0:"+p0.x,p0.y)
+  let p1:mypoint = {x:ls[0][0],y:ls[1][1]}
+  let p2:mypoint = {x:ls[1][0],y:ls[1][1]}
+  console.log("p1:"+p1.x,p1.y)
+  console.log("p1:"+p2.x,p2.y)
+  console.log("distance between the point(p1) and the line(p2p3) is:" + pointToLine(p0,p1,p2));
+}
+var element4  = document.getElementById ('pointlinecompare');
+      element4.addEventListener ('click', pointLine);
+  
   }
-/**
- * 
- */
-
   /**
    * If the input data changes, update the layers
    * @param changes the angular changes object
@@ -218,46 +181,5 @@ function addpoint(){
       });
     }
   }
-}
 
-// module ButtonComponent {
-//   $(function () {
-//       var basicButton = new ej.Button($("#button_normal"), {
-//           //normal size type is used
-//           size: "normal",
-//           showRoundedCorner: true,
-//           contentType: "imageonly",
-//           prefixIcon: "e-icon e-handup"
-//       });
-//      var basicButton1 = new ej.Button($("#button_mini"), {  
-//           showRoundedCorner: true,
-//           //mini size type is used
-//           size: "mini"
-//       });
-//      var basicButton2 = new ej.Button($("#button_small"), {   
-//           showRoundedCorner: true,
-//           //small size type is used
-//           size: "small"
-//       });
-//     var basicButton3 = new ej.Button($("#button_medium"), {   
-//           showRoundedCorner: true,
-//           //medium size type is used
-//           size: "medium"
-//       });
-//    var basicButton4 = new ej.Button($("#button_large"), {  
-//           //large size type is used
-//           size: "large",
-//           showRoundedCorner: true,
-//           contentType: "textandimage",
-//           prefixIcon: "e-icon e-handup"
-//       });
-//    var basicButton4 = new ej.Button($("#button_custom"), {  
-//           //button with user given height and width
-//           height: 50,
-//           width: 130,
-//           showRoundedCorner: true,
-//           contentType: "textandimage",
-//           prefixIcon: "e-icon e-handup"
-//       });
-//   });
-// }
+}

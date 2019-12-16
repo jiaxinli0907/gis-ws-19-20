@@ -4,7 +4,6 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
-import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 
 @NgModule({
   declarations: [
@@ -13,8 +12,7 @@ import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
-    ToolbarModule
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

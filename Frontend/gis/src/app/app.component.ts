@@ -12,14 +12,7 @@ import '../app/map/map.component'
 
 })
 export class AppComponent implements OnInit {
-// my code
 
-// @ViewChild('element') element;
-public boldAttribute: any = { 'class': 'custom_bold', 'id': 'itemId' };
-public italicAttribute: any = { 'class': 'custom_italic' };
-// ngAfterViewInit() {
-// }
-//
   overlays: Array<Overlay> = new Array<Overlay>();
 
   // constructor is here only used to inject services
