@@ -186,7 +186,11 @@ function onMapClickPoint(e) {
   }
 }
 
-mymap.on('click', onMapClickPoint);
+function addpoint(){
+  mymap.on('click', onMapClickPoint);
+}
+
+
 
 
 
