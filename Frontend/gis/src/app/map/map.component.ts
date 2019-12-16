@@ -111,64 +111,74 @@ export class MapComponent implements OnInit, DoCheck {
 //         mymap.off('mousemove')
 //     }
 
-// // add polygon -- success
-// var points=[]
-// var lines= L.polyline([])
-// var tempLines= L.polyline([])
-// var ls=[]
+var element3  = document.getElementById ('buttonPol');
+      element3.addEventListener ('click', addPol);
 
-// mymap.on('click', onClick);    
-// mymap.on('dblclick',onDoubleClick);
-// mymap.on('mousemove',onMove)
+function addPol(){
+  mymap.on('click', onMapClickPolygon);
+}
 
+ // add polygon -- success
+ function onMapClickPolygon(){
 
+ var points=[]
+ var lines= L.polyline([])
+ var tempLines= L.polyline([])
+ var ls=[]
 
-// function onClick(e)
-// {
-
-//     points.push([e.latlng.lat,e.latlng.lng])
-//     lines.addLatLng(e.latlng)
-//     mymap.addLayer(tempLines)
-//     mymap.addLayer(lines)
-//     mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
-
-// }
-// function onMove(e) {
-//     if(points.length>0) {
-//         ls=[points[points.length-1],[e.latlng.lat,e.latlng.lng],points[0]]
-//         tempLines.setLatLngs(ls)
-//         // map.addLayer(tempLines)
-//     }
-// }
-
-// function onDoubleClick(e)
-// {
-//     L.polygon(points).addTo(mymap)
-//     points=[]
-//     //map.removeLayer(tempLines)
-//     //tempLines.remove()
-//     lines.remove()
-//     tempLines.remove()
-//     lines= L.polyline([])
-// }
-
-// var point:any
-// mymap.on('click',OnClickP)
-// function OnClickP(e){
-//   point.push([e.latlng.lat,e.latlng.lng])
-//   point.addLatLng(e.latlng)
-//   mymap.addLayer(point)
-//   L.marker(point).addTo(mymap)
-//   .bindPopup("this is a point.").openPopup().setPopupContent("You clicked at " + e.latlng.toString());
-// }
+ mymap.on('click', onClick);    
+ mymap.on('dblclick',onDoubleClick);
+ mymap.on('mousemove',onMove)
 
 
-var element  = document.getElementById ('button');
-      element.addEventListener ('click', addpoint);
 
-function addpoint(){
+ function onClick(e)
+ {
+
+     points.push([e.latlng.lat,e.latlng.lng])
+     lines.addLatLng(e.latlng)
+     mymap.addLayer(tempLines)
+     mymap.addLayer(lines)
+     mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
+
+ }
+ function onMove(e) {
+     if(points.length>0) {
+         ls=[points[points.length-1],[e.latlng.lat,e.latlng.lng],points[0]]
+         tempLines.setLatLngs(ls)
+
+     }
+ }
+
+ function onDoubleClick(e)
+ {
+     L.polygon(points).addTo(mymap)
+     points=[]
+     //map.removeLayer(tempLines)
+     //tempLines.remove()
+     lines.remove()
+     tempLines.remove()
+     lines= L.polyline([])
+ }
+
+ }
+
+
+var element  = document.getElementById ('buttonPoint');
+      element.addEventListener ('click', addPoint);
+
+function addPoint(){
   mymap.on('click', onMapClickPoint);
 }
+
+var element2  = document.getElementById ('buttonLine');
+      element2.addEventListener ('click', addLine);
+
+function addLine(){
+  mymap.on('click', onMapClickPoint);
+}
+
+
 
 // add marker --success
 var point = []
