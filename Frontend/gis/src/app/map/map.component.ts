@@ -159,7 +159,7 @@ var element4  = document.getElementById ('pointlinecompare');
 
 
 function pointPolygon(){
-  let pl: mypointarray
+  let pl: Array<mypoint> = []
   // let p:mypoint
   let p0:mypoint = {x:point[0][0],y:point[0][1]}
   console.log("p0:"+p0.x,p0.y)
@@ -173,10 +173,10 @@ function pointPolygon(){
     console.log("outside, the distance is:"+d[1])
   }
   else if(d[0]==1){
-    console.log("inside, the distanceis"+d[1])
+    console.log("inside, the distance is:"+d[1])
   }
   else{
-    console.log("on the edge, the distanceis"+d[1])
+    console.log("on the edge, the distance is:"+d[1])
   }
 
 }

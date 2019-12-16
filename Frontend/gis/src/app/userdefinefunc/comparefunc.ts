@@ -45,8 +45,8 @@ export function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
 
 export function pointInPolygon(p0:mypoint, pl:mypointarray){
     let ifin: number //ifin = 0 outside ifin = 1 inside ifin = 2 on the edge
-    let dist: number
-    let d: number
+    let dist: number  = 100000
+    let d: number = 0
     ifin = 0
     pl.push(pl[0])
     for(var i=0; i < pl.length-1; i++){
@@ -73,7 +73,6 @@ export function pointInPolygon(p0:mypoint, pl:mypointarray){
                 if(d < dist){
                     dist = d
                 }
-
             }
             
         }      
@@ -194,4 +193,4 @@ export interface mypoint {
     y: number;
 }
 
-export type mypointarray = [mypoint]
+export type mypointarray = Array<mypoint>
