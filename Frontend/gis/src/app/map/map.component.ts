@@ -72,7 +72,7 @@ export class MapComponent implements OnInit, DoCheck {
     // ]).addTo(mymap).bindPopup("I am a polygon.");
     // L.polyline([[49.425267, 11.063232],
     //   [48.414619, 10.69519]]).addTo(mymap).bindPopup("I am a line");
-    // //为点击地图的事件 增加popup
+    // 
     // var popup = L.popup();
 
    
@@ -117,11 +117,11 @@ export class MapComponent implements OnInit, DoCheck {
 // var tempLines= L.polyline([])
 // var ls=[]
 
-// mymap.on('click', onClick);    //点击地图
+// mymap.on('click', onClick);    
 // mymap.on('dblclick',onDoubleClick);
-// mymap.on('mousemove',onMove)//双击地图
+// mymap.on('mousemove',onMove)
 
-// //map.off(....) 关闭该事件
+
 
 // function onClick(e)
 // {
@@ -162,6 +162,14 @@ export class MapComponent implements OnInit, DoCheck {
 //   .bindPopup("this is a point.").openPopup().setPopupContent("You clicked at " + e.latlng.toString());
 // }
 
+
+var element  = document.getElementById ('button');
+      element.addEventListener ('click', addpoint);
+
+function addpoint(){
+  mymap.on('click', onMapClickPoint);
+}
+
 // add marker --success
 var point = []
 function onMapClickPoint(e) {
@@ -186,7 +194,7 @@ function onMapClickPoint(e) {
   }
 }
 
-mymap.on('click', onMapClickPoint);
+
 
 
 
