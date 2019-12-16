@@ -20,6 +20,8 @@
     "@angular/platform-browser": "~8.2.0",
     "@angular/platform-browser-dynamic": "~8.2.0",
     "@angular/router": "~8.2.0",
+    "@syncfusion/ej2-angular-navigations": "^17.3.34",
+    "@types/ej.web.all": "^17.3.2",
     "@types/leaflet-draw": "^1.0.1",
     "d3": "^5.12.0",
     "leaflet": "^1.5.1",

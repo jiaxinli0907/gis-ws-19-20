@@ -11,6 +11,14 @@ import {mypoint,pointToLine} from '../userdefinefunc/comparefunc'
   styleUrls: ['./map.component.css'],
   // super important, otherwise the defined css doesn't get added to dynamically created elements, for example, from D3.
   encapsulation: ViewEncapsulation.None,
+  // template: `
+  // <ejs-toolbar>
+  //   <e-items>
+  //      <e-item text='Bold'  [htmlAttributes] = 'boldAttribute'></e-item>
+  //      <e-item text='Italic' [htmlAttributes] = 'italicAttribute'></e-item>
+  //   </e-items>
+  // </ejs-toolbar>
+  // `
 })
 export class MapComponent implements OnInit, DoCheck {
 
@@ -74,22 +82,20 @@ export class MapComponent implements OnInit, DoCheck {
 //     var lines= L.polyline(points)
 //     var tempLines= L.polyline([])
 //     var ls=[]
-//     mymap.on('click', onClick);    //点击地图
-//     mymap.on('dblclick',onDoubleClick);
-
-
-//     //map.off(....) 关闭该事件
-//     function onClick(e)
+//     mymap.on('click', onClickln);  
+//     mymap.on('dblclick',onDoubleClickln);
+//     console.log("the points is:"+points)
+//     function onClickln(e)
 //     {
 
 //         points.push([e.latlng.lat,e.latlng.lng])
 //         lines.addLatLng(e.latlng)
 //         mymap.addLayer(lines)
 //         mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
-//         mymap.on('mousemove',onMove)//双击地图
+//         mymap.on('mousemove',onMoveln)//双击地图
 
 //     }
-//     function onMove(e) {
+//     function onMoveln(e) {
 //         if(points.length>0) {
 //             ls=[points[points.length-1],[e.latlng.lat,e.latlng.lng]]
 //             tempLines.setLatLngs(ls)
@@ -97,7 +103,7 @@ export class MapComponent implements OnInit, DoCheck {
 //         }
 //     }
 
-//     function onDoubleClick(e)
+//     function onDoubleClickln(e)
 //     {
 //         L.polyline(points).addTo(mymap)
 //         points=[]
@@ -158,24 +164,29 @@ export class MapComponent implements OnInit, DoCheck {
 
 // add marker --success
 var point = []
-function onMapClick(e) {
+function onMapClickPoint(e) {
   point.push([e.latlng.lat,e.latlng.lng])
   L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap)
         .bindPopup("I am a point.").openPopup().setPopupContent("You clicked the map at " + e.latlng.toString());
   //  console.log(point);
-   mymap.on('click', onMapClick);
+  //  mymap.on('click', onMapClick);
    if(point.length >=3){
+    L.marker(point[point.length-2]).addTo(mymap)
+    .bindPopup("<b>Hello world!</b><br />I am a point.").openPopup();
     let p1:mypoint = {x:point[point.length -3][0],y:point[point.length -3][1]}
     let p2:mypoint = {x:point[point.length -2][0],y:point[point.length -2][1]}
     let p3:mypoint = {x:point[point.length -1][0],y:point[point.length -1][1]}
     // console.log("p1.xy "+p1.x);
+    
     console.log("point 1 is:" + p1.x,p1.y);
     console.log("point 2 is:" + p2.x,p2.y);
     console.log("point 3 is:" + p3.x,p3.y);
     console.log("distance between the point(p1) and the line(p2p3) is:" + pointToLine(p1,p2,p3));
+
   }
 }
-mymap.on('click', onMapClick);
+
+mymap.on('click', onMapClickPoint);
 
 
 
@@ -185,6 +196,9 @@ mymap.on('click', onMapClick);
 
 
   }
+/**
+ * 
+ */
 
   /**
    * If the input data changes, update the layers
@@ -201,3 +215,45 @@ mymap.on('click', onMapClick);
     }
   }
 }
+
+// module ButtonComponent {
+//   $(function () {
+//       var basicButton = new ej.Button($("#button_normal"), {
+//           //normal size type is used
+//           size: "normal",
+//           showRoundedCorner: true,
+//           contentType: "imageonly",
+//           prefixIcon: "e-icon e-handup"
+//       });
+//      var basicButton1 = new ej.Button($("#button_mini"), {  
+//           showRoundedCorner: true,
+//           //mini size type is used
+//           size: "mini"
+//       });
+//      var basicButton2 = new ej.Button($("#button_small"), {   
+//           showRoundedCorner: true,
+//           //small size type is used
+//           size: "small"
+//       });
+//     var basicButton3 = new ej.Button($("#button_medium"), {   
+//           showRoundedCorner: true,
+//           //medium size type is used
+//           size: "medium"
+//       });
+//    var basicButton4 = new ej.Button($("#button_large"), {  
+//           //large size type is used
+//           size: "large",
+//           showRoundedCorner: true,
+//           contentType: "textandimage",
+//           prefixIcon: "e-icon e-handup"
+//       });
+//    var basicButton4 = new ej.Button($("#button_custom"), {  
+//           //button with user given height and width
+//           height: 50,
+//           width: 130,
+//           showRoundedCorner: true,
+//           contentType: "textandimage",
+//           prefixIcon: "e-icon e-handup"
+//       });
+//   });
+// }
