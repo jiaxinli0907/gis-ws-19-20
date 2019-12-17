@@ -1,29 +1,52 @@
-import { max } from 'rxjs/operators';
+import { max, min } from 'rxjs/operators';
 import { point } from 'leaflet';
 
-// class Compare{
-//     pp0:mypoint
-//     pl1:Array<mypoint>
-//     pl2:Array<mypoint>
-//     constructor(public pointlist1:Array<mypoint>,public pointlist2:Array<mypoint>){
-//         this.pl1 = pointlist1
-//         this.pl2 = pointlist2
-//     }
+export function pointToPoint(p0: mypoint, p1: mypoint){
+    // function to compute the distance between two points
+    //for now, computing the Euclidean distance. CHange later.
+    console.log(p0)
+    console.log(p1)
+        let d: number = Math.sqrt((p0.x-p1.x)^2 + (p0.y-p1.y)^2)
+        console.log(d)
+        return d
+    }
 
-//     getPointToLine(): number {
-//         return pointToLine(this.pl1[0],this.pl2[0],this.pl2[1]) ;
-//     }
-//     getPointInPolygon(): number {
-//         return pointInPolygon(this.pl1[0],this.pl2);//ifin = 0 outside ifin = 1 inside ifin = 2 on the edge
-//     }
-//     getPolygonAndPolygon():boolean{
-//         return polygonAndPolygon(this.pl1, this.pl2);
-//     }
-//     getLineAndLine():boolean{
-//         return lineAndLine(this.pl1[0],this.pl1[1],this.pl2[0],this.pl2[1])
-//     }
+export function lineInPolygon(p0: mypoint, p1: mypoint, pl: mypointarray){
+    // function to check if a polygon contains and/or intersects a line
 
-// }
+    let flag: number // flag = 0 outside;flag = 1 intersect;flag = 2 contain 
+    // let polygonContainsLine = 0
+    // let lineIntersectsPolygon = 0
+
+    // case 1: the line is within the polygon. Check if the two points are within the polygon
+    if (pointInPolygon(p0,pl)[0] && pointInPolygon(p1,pl)[0]){
+        // polygonContainsLine  = 1
+        // return polygonContainsLine
+        return flag = 2
+    }
+    //case 2: the line intersects the polygon at an edge. 
+    else{
+    // for(let pl1 of pl){
+    //     for(let pl2 of pl){
+    //         if(lineAndLine(p0, p1, pl1, pl2)[0]){
+    //             // lineIntersectsPolygon = 1
+    //             return flag = 1
+    //             break;
+    //         }
+    //         if(flag == 1)
+    //         break;
+    //     }
+    // } 
+    pl.push(pl[0])
+    for(let i = 0; i< pl.length-1;i++){
+                if(lineAndLine(p0, p1, pl[i], pl[i+1])[0]){
+                return flag = 1
+                break;
+            }
+    }
+    return flag = 0// lineIntersectsPolygon
+}
+} 
 
 export function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
 
@@ -44,43 +67,47 @@ export function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
 }
 
 export function pointInPolygon(p0:mypoint, pl:mypointarray){
-    let ifin: number //ifin = 0 outside ifin = 1 inside ifin = 2 on the edge
-    let dist: number  = 100000
+    let ifin: boolean//ifin = false outside ifin = true inside
+    let dist: number  = 1000
     let d: number = 0
-    ifin = 0
+    let maxx: number = 0
+    let p:mypoint
+    let count:number = 0
+    // find bounding x y
+    for( p of pl){
+        if(p.x > maxx){
+            maxx = p.x
+        }
+    }
     pl.push(pl[0])
     for(var i=0; i < pl.length-1; i++){
-        if(pl[i].y == pl[i+1].y && pl[i].y == p0.y){ //the ray is overlap with segment
-            if(p0.x < Math.max(pl[i].x, pl[i+1].x) && p0.x > Math.min(pl[i].x, pl[i+1].x)){ // p0 in a segment
-                ifin = 2
-                dist = 0
-            }
-
-            if(pl[i].x==p0.x || p0.x == pl[i+1].x){ //p0 is a vertex
-                ifin = 2
-                dist = 0
-            }
-      
-            if(p0.x < Math.min(pl[i].x,pl[i+1].x) || p0.x > Math.max(pl[i].x,pl[i+1].x)){ //p0 is in the outside
-                ifin = 1
-                dist = Math.min(Math.abs(p0.x - pl[i].x),Math.abs(p0.x - pl[i+1].x))
-            }     
+        d = pointToLine(p0,pl[i],pl[i+1])
+        if(d == 0){ // point on the edge
+            ifin = false
+            dist = 0
+        } 
+        else {
+        // construct ray(right)
+        let p0_prime:mypoint = {x: maxx - p0.x, y: p0.y};
+        if(p0_prime.x < 0){ // n0 intersection
+            ifin = false
+            dist = p0.x 
+            return [ifin,dist]
         }
-        if(p0.y> Math.min(pl[i].y,pl[i+1].y) && p0.y< Math.max(pl[i].y,pl[i+1].y)){
-            ifin = 1
-            for(i=0; i <pl.length-1; i++){
-                d = pointToLine(p0,pl[i],pl[i+1])
-                if(d < dist){
+        // ray line intersect
+        if(lineAndLine(p0,p0_prime, pl[i],pl[i+1])[0]== true ){
+                count++
+                if(dist > d){
                     dist = d
-                }
+                } 
             }
-            
-        }      
+        }  
     }
+    if(count%2==0){ifin = false} else {ifin = true}
     return [ifin,dist]
 }
 
-export function polygonAndPolygon(pl1:mypoint[],pl2:mypoint[]){
+export function polygonAndPolygon(pl1:mypointarray,pl2:mypointarray){
     let ifin:boolean = false //if intersection flag
     // calculate MBR
     let maxx1:number = 10000
