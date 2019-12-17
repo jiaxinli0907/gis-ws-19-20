@@ -1,7 +1,13 @@
 import { Component, OnInit, Input, ViewEncapsulation, IterableDiffers, DoCheck, IterableChangeRecord } from '@angular/core';
+<<<<<<< HEAD
 import 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/images/marker-icon-2x.png';
+=======
+
+
+>>>>>>> origin/marco
 import * as L from 'leaflet';
+import * as LD from 'leaflet-draw';
 import { Overlay } from '../types/map.types';
 declare const l:any
 
@@ -39,6 +45,7 @@ export class MapComponent implements OnInit, DoCheck {
     const baseMaps = {
       OpenStreetMap: basemap,
     };
+
 
     // add a control which lets us toggle maps and overlays
     this.layerControl = L.control.layers(baseMaps);
