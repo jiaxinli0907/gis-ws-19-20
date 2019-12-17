@@ -42,7 +42,19 @@ export class MapComponent implements OnInit, DoCheck {
 
     // add a control which lets us toggle maps and overlays
     this.layerControl = L.control.layers(baseMaps);
-    this.layerControl.addTo(mymap);
+    this.layerControl.addTo(mymap);    
+
+    var element1  = document.getElementById ('buttonPoint');
+      element1.addEventListener ('click', addPoint);
+      element1.style.backgroundColor="red";
+
+    var element2  = document.getElementById ('buttonLine');
+      element2.addEventListener ('click', addLine);
+      element2.style.backgroundColor="red";
+
+      var element3  = document.getElementById ('buttonPol');
+      element3.addEventListener ('click', addPol);
+      element3.style.backgroundColor="red";  
 
 
 // add line  --success
@@ -58,16 +70,17 @@ export class MapComponent implements OnInit, DoCheck {
         lines.addLatLng(e.latlng)
         mymap.addLayer(lines)
         mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
-        mymap.on('mousemove',onMoveln)
+      //  mymap.addEventListener('mousemove',onMoveln)
     }
-    function onMoveln(e) {
-        if(linepoint.length>0) {
-            ls=[linepoint[linepoint.length-1],[e.latlng.lat,e.latlng.lng]]
-            console.log("ls:"+ls)
-            tempLines.setLatLngs(ls)
-            mymap.addLayer(tempLines)
-        }
-    }
+   
+ /*   function onMoveln(e) {
+      if(linepoint.length>0) {
+          ls=[linepoint[linepoint.length-1],[e.latlng.lat,e.latlng.lng]]
+          console.log("ls:"+ls)
+          tempLines.setLatLngs(ls)
+          mymap.addLayer(tempLines)
+      }
+    } */
 
     function onDoubleClickln(e)
     {
@@ -75,7 +88,8 @@ export class MapComponent implements OnInit, DoCheck {
         console.log("linepoint:"+linepoint)
         linepoint=[]
         lines= L.polyline(linepoint)
-        mymap.off('mousemove')
+       // mymap.removeEventListener('mousemove',onMoveln)
+        mymap.removeEventListener('click', onClickln)
     }
 // line end
  // add polygon -- success
@@ -121,27 +135,41 @@ function onMapClickPoint(e) {
 
 
  function addPoint(){
-  mymap.on('dblclick', onMapClickPoint);
+  mymap.removeEventListener('click', onClickPolygon);    
+  mymap.removeEventListener('dblclick',onDoubleClickPolygon);
+  mymap.removeEventListener('mousemove',onMovePolygon);
+  mymap.removeEventListener('dbclick', onDoubleClickln);
+  mymap.removeEventListener('click', onClickln);
+ // mymap.removeEventListener('mousemove',onMoveln);
+  mymap.addEventListener('click', onMapClickPoint);
+  element1.style.backgroundColor="green";
+  element2.style.backgroundColor="red";
+  element3.style.backgroundColor="red";
 }
+
 function addLine(){
-  mymap.on('click', onClickln);  
-  mymap.on('dblclick',onDoubleClickln);
+  mymap.removeEventListener('click', onClickPolygon);    
+  mymap.removeEventListener('dblclick',onDoubleClickPolygon);
+  mymap.removeEventListener('mousemove',onMovePolygon);
+  mymap.removeEventListener('click', onMapClickPoint);
+  mymap.addEventListener('click', onClickln); 
+  mymap.addEventListener('dbclick', onDoubleClickln);
+  element1.style.backgroundColor="red";
+  element2.style.backgroundColor="green";
+  element3.style.backgroundColor="red";
 }
 
 function addPol(){
-  mymap.on('click', onClickPolygon);    
-  mymap.on('dblclick',onDoubleClickPolygon);
-  mymap.on('mousemove',onMovePolygon)
+  mymap.removeEventListener('click', onClickln);
+  mymap.removeEventListener('click', onMapClickPoint); 
+  mymap.removeEventListener('dbclick', onDoubleClickln);
+  mymap.addEventListener('click', onClickPolygon);    
+  mymap.addEventListener('dblclick',onDoubleClickPolygon);
+  mymap.addEventListener('mousemove',onMovePolygon);
+  element1.style.backgroundColor="red";
+  element2.style.backgroundColor="red";
+  element3.style.backgroundColor="green";
 }
-
-var element3  = document.getElementById ('buttonPol');
-      element3.addEventListener ('click', addPol);
-
-var element1  = document.getElementById ('buttonPoint');
-      element1.addEventListener ('click', addPoint);
-
-var element2  = document.getElementById ('buttonLine');
-      element2.addEventListener ('click', addLine);
 
 function pointLine(){
   let p0:mypoint = {x:point[0][0],y:point[0][1]}
