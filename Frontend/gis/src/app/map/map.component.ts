@@ -33,6 +33,7 @@ export class MapComponent implements OnInit, DoCheck {
 
     // create map, set initial view to basemap and zoom level to center of BW
     const mymap = L.map('main', { layers: [basemap] }).setView([48.6813312, 9.0088299], 9);
+    mymap.doubleClickZoom.disable();
 
 
     // create maps and overlay objects for leaflet control
@@ -52,9 +53,13 @@ export class MapComponent implements OnInit, DoCheck {
       element2.addEventListener ('click', addLine);
       element2.style.backgroundColor="red";
 
-      var element3  = document.getElementById ('buttonPol');
+    var element3  = document.getElementById ('buttonPol');
       element3.addEventListener ('click', addPol);
-      element3.style.backgroundColor="red";  
+      element3.style.backgroundColor="red"; 
+
+    var reset = document.getElementById('resetAll');
+      reset.addEventListener('click', resetAll)
+
 
 
 // add line  --success
@@ -169,6 +174,10 @@ function addPol(){
   element1.style.backgroundColor="red";
   element2.style.backgroundColor="red";
   element3.style.backgroundColor="green";
+}
+
+function resetAll(){
+  location.reload(true);
 }
 
 function pointLine(){
