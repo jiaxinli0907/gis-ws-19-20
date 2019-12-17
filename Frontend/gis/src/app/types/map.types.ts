@@ -2,7 +2,7 @@ import { FeatureCollection } from 'geojson';
 
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-
+import {pointToLine, pointInPolygon,  lineAndLine,polygonAndPolygon, mypoint} from '../userdefinefunc/comparefunc'
 
 class Overlay {
 
@@ -17,6 +17,7 @@ class Overlay {
     createOverlay() {
         return L.geoJSON(this.featureCollection);
     }
+
 }
 
 class LandkreisLayer extends Overlay {
@@ -173,7 +174,7 @@ class ComparisiontaskLayer extends Overlay {
         // calculate new color scale
         // .domain expects an array of [min, max] value
         // d3.extent returns exactly this array
-        const minMaxBars = d3.extent(this.featureCollection.features.map(d => d.properties.id));//d.properties.num_bars
+        const minMaxBars = d3.extent(this.featureCollection.features.map(d => d.properties.area));//d.properties.num_bars
         const colorScale = d3.scaleSequential(d3.interpolateReds).domain(minMaxBars);
 
         // create tooltip
@@ -191,7 +192,7 @@ class ComparisiontaskLayer extends Overlay {
         const comparisiontaskLayer = L.geoJSON(this.featureCollection, {
             style: (feature) => {
                 return {
-                    fillColor: colorScale(feature.properties.id), //feature.properties.num_bars
+                    fillColor: colorScale(feature.properties.area), //feature.properties.num_bars
                     weight: 2,
                     opacity: 1,
                     color: 'white',
@@ -208,8 +209,11 @@ class ComparisiontaskLayer extends Overlay {
                         tooltip.style('display', null);
                         tooltip.style('top', `${e.originalEvent.clientY - 75}px`);
                         tooltip.style('left', `${e.originalEvent.clientX + 25}px`);
-                        nameP.text(`id: ${feature.properties.id}`); //${feature.properties.name}
-                        areaP.text(`coordinate: ${feature.properties.pointway}`); // ${feature.properties.num_bars}
+                        nameP.text(`name: ${feature.properties.name}`);
+                        areaP.text(`area: ${feature.properties.area}`); //${feature.properties.name}
+                        // numpointP.text(`num of points: ${feature.properties.num_point}`); // ${feature.properties.num_bars}
+                        // pointidP.text(`point_id: ${feature.properties.pointidP}`);
+
 
                         // set highlight style
                         const l = e.target;
@@ -231,8 +235,11 @@ class ComparisiontaskLayer extends Overlay {
             }
         });
 
+
+
         return comparisiontaskLayer;
     }
 }
 
-export { Overlay, LandkreisLayer, BardichteLayer ,ComparisiontaskLayer};
+export { Overlay, LandkreisLayer, BardichteLayer, ComparisiontaskLayer};
+
