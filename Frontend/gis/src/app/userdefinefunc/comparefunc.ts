@@ -97,7 +97,7 @@ export function pointInPolygon(p0:mypoint, pl:mypointarray){
             maxx = p.x
         }
     }
-    console.log("max x:"+maxx)
+    // console.log("max x:"+maxx)
     pl.push(pl[0])
     // construct ray(right)
     let p0_prime:mypoint = {x: maxx, y: p0.y};
