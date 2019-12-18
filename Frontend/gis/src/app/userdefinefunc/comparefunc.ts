@@ -4,12 +4,121 @@ import { point } from 'leaflet';
 export function pointToPoint(p0: mypoint, p1: mypoint){
     // function to compute the distance between two points
     //for now, computing the Euclidean distance. CHange later.
-    console.log(p0)
-    console.log(p1)
+//     console.log("point 1: "+p0.x,p0.y)
+//     console.log("point 2: "+p1.x,p1.y)
         let d: number = Math.sqrt((p0.x-p1.x)^2 + (p0.y-p1.y)^2)
-        console.log(d)
+        // console.log(d)
         return d
     }
+
+
+export function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
+
+    let d: number // the shorest distance from a point to the line
+ 
+    let u: number[] 
+    u = [p0.x-p1.x, p0.y-p1.y];
+    // console.log("u:"+u)
+    let v: number[] 
+    v = [p2.x-p1.x, p2.y-p1.y];
+    let dot =  u[0]*v[0] + u[1]*v[1]
+    // console.log("dot" + dot)
+    if( dot < 0){
+        d = Math.min(Math.sqrt((p0.x-p1.x)^2+(p0.y-p1.y)^2),Math.sqrt((p0.x-p2.x)^2+(p0.y-p2.y)^2))
+        // console.log(d)
+    }
+    else{
+        d = Math.abs(u[0]*v[1]-u[1]*v[0]) / Math.sqrt((p1.x-p2.x)^2+(p1.y-p2.y)^2)
+        // console.log(d)
+    }
+    return d
+}
+
+export function lineAndLine(p11:mypoint,p12:mypoint,p21:mypoint,p22:mypoint){
+    let ifin:boolean = false // if intersection
+    let dist:number = 10000// distance between two line
+    let d:number
+    let t1_denominator = (p11.x-p12.x)*(p21.y-p22.y) - (p21.x - p22.x)*(p11.y - p12.y)
+    let t2_denominator = (p21.x-p22.x)*(p11.y-p12.y) - (p11.x - p12.x)*(p21.y - p22.y)
+
+    if(t1_denominator ==0 || t2_denominator==0){
+        if((p21.y-p11.y)/(p21.x-p11.x) == (p12.y-p11.y)/(p12.x-p11.x)) {//overlap
+            ifin =  true
+            dist = 0
+            return {ifin:ifin,dist:dist}
+        }
+        else {
+            //parallel
+            ifin = false
+            dist =  pointToLine(p11,p21,p22)
+            return {ifin:ifin,dist:dist}
+        }
+    }
+    else{
+        let t1 = ((p11.x-p21.x)*(p21.y-p22.y) - (p21.x - p22.x)*(p11.y - p21.y))/t1_denominator
+        let t2 = ((p21.x-p11.x)*(p11.y-p12.y) - (p11.x - p12.x)*(p21.y - p11.y))/t2_denominator
+        if(t1>=0 && t1 <=1 && t2>=0 && t2<=1){
+            ifin = true  
+            dist = 0
+            return {ifin:ifin,dist:dist}
+        }
+        else{
+            ifin = false
+            dist = Math.min(pointToLine(p11,p21,p22),pointToLine(p12,p21,p22),pointToLine(p21,p11,p12),pointToLine(p22,p11,p12))
+            // let d1 = pointToLine(p11,p21,p22)
+            // if(d1 < dist){
+            //     dist = d1 }
+            // let d2 = pointToLine(p12,p21,p22)
+            // if(d2 < dist){
+            //     dist = d2 }
+            // let d3 = pointToLine(p21,p11,p12)
+            // if(d3 < dist){ 
+            //     dist = d3}
+            // let d4 = pointToLine(p22,p11,p12)
+            // if(d4 < dist){
+            //     dist = d4 }
+            return {ifin:ifin,dist:dist}
+        }
+    }
+//     return [ifin,dist]
+}
+
+export function pointInPolygon(p0:mypoint, pl:mypointarray){
+    let ifin: boolean = false//ifin = false outside ifin = true inside
+    let dist: number 
+    dist = 1000
+    let d: number = 0
+    let maxx: number = -100
+    let p:mypoint
+    let count:number = 0
+    // find bounding x y
+    for( p of pl){
+        if(p.x > maxx){
+            maxx = p.x
+        }
+    }
+    console.log("max x:"+maxx)
+    pl.push(pl[0])
+    // construct ray(right)
+    let p0_prime:mypoint = {x: maxx, y: p0.y};
+    for(var i=0; i < pl.length-1; i++){
+        // ray line intersect
+        let d1 = lineAndLine(p0,p0_prime, pl[i],pl[i+1])
+        let distance:number = d1.dist
+        // console.log("d1,",d1.ifin)
+        if( d1.ifin== true ){
+                count++
+                if(dist > distance){
+                    dist = distance
+                } 
+            } 
+    }
+    if(count%2 == 0){
+        ifin = false
+    } else {
+        ifin = true }
+    return {ifin:ifin, dist:dist}
+}
 
 export function lineInPolygon(p0: mypoint, p1: mypoint, pl: mypointarray){
     // function to check if a polygon contains and/or intersects a line
@@ -19,7 +128,7 @@ export function lineInPolygon(p0: mypoint, p1: mypoint, pl: mypointarray){
     // let lineIntersectsPolygon = 0
 
     // case 1: the line is within the polygon. Check if the two points are within the polygon
-    if (pointInPolygon(p0,pl)[0] && pointInPolygon(p1,pl)[0]){
+    if (pointInPolygon(p0,pl).ifin && pointInPolygon(p1,pl).ifin){
         // polygonContainsLine  = 1
         // return polygonContainsLine
         return flag = 2
@@ -39,73 +148,14 @@ export function lineInPolygon(p0: mypoint, p1: mypoint, pl: mypointarray){
     // } 
     pl.push(pl[0])
     for(let i = 0; i< pl.length-1;i++){
-                if(lineAndLine(p0, p1, pl[i], pl[i+1])[0]){
-                return flag = 1
-                break;
+         if(lineAndLine(p0, p1, pl[i], pl[i+1]).ifin){
+          return flag = 1
+          break;
             }
     }
     return flag = 0// lineIntersectsPolygon
 }
 } 
-
-export function pointToLine(p0: mypoint, p1:mypoint, p2: mypoint){
-
-    let d: number // the shorest distance from a point to the line
- 
-    let u: number[] = [p0.x-p1.x, p0.y-p1.y];
-    let v: number[] = [p2.x-p1.x, p2.y-p1.y];
-    // console.log("point0.x"+point0.x)
-    if( u[0]*v[1]-u[1]*v[0] < 0){
-        d = Math.min(Math.sqrt((p0.x-p2.x)^2+(p0.y-p2.y)^2),Math.sqrt((p1.x-p0.x)^2+(p1.y-p0.y)^2))
-        // console.log(d)
-    }
-    else{
-        d = Math.abs(u[0]*v[1]-u[1]*v[0])/ Math.sqrt((p1.x-p2.x)^2+(p1.y-p2.y)^2)
-        // console.log(d)
-    }
-    return d
-}
-
-export function pointInPolygon(p0:mypoint, pl:mypointarray){
-    let ifin: boolean//ifin = false outside ifin = true inside
-    let dist: number  = 1000
-    let d: number = 0
-    let maxx: number = 0
-    let p:mypoint
-    let count:number = 0
-    // find bounding x y
-    for( p of pl){
-        if(p.x > maxx){
-            maxx = p.x
-        }
-    }
-    pl.push(pl[0])
-    for(var i=0; i < pl.length-1; i++){
-        d = pointToLine(p0,pl[i],pl[i+1])
-        if(d == 0){ // point on the edge
-            ifin = false
-            dist = 0
-        } 
-        else {
-        // construct ray(right)
-        let p0_prime:mypoint = {x: maxx - p0.x, y: p0.y};
-        if(p0_prime.x < 0){ // n0 intersection
-            ifin = false
-            dist = p0.x 
-            return [ifin,dist]
-        }
-        // ray line intersect
-        if(lineAndLine(p0,p0_prime, pl[i],pl[i+1])[0]== true ){
-                count++
-                if(dist > d){
-                    dist = d
-                } 
-            }
-        }  
-    }
-    if(count%2==0){ifin = false} else {ifin = true}
-    return [ifin,dist]
-}
 
 export function polygonAndPolygon(pl1:mypointarray,pl2:mypointarray){
     let ifin:boolean = false //if intersection flag
@@ -155,65 +205,25 @@ export function polygonAndPolygon(pl1:mypointarray,pl2:mypointarray){
     }
 
     for(let node of pl1){
-        let p = pointInPolygon(node, pl2)[0]
-        if(p!=0){
-            ifin = true
+        let p = pointInPolygon(node, pl2).ifin
+        if(p){
+            ifin = p
+            break
         }
+        
     }
 
     for(let node of pl2){
-        let p = pointInPolygon(node, pl1)[0]
-        if(p!=0){
-            ifin = true
+        let p = pointInPolygon(node, pl1).ifin
+        if(p){
+            ifin = p
+            break
         }
     }
     return ifin
 }
 
-export function lineAndLine(p11:mypoint,p12:mypoint,p21:mypoint,p22:mypoint){
-    let ifin:boolean = false // if intersection
-    let dist:number // distance between two line
-    let d:number
-    let t1_denominator = (p11.x-p12.x)*(p21.y-p22.y) - (p21.x - p22.x)*(p11.y - p12.y)
-    let t2_denominator = (p21.x-p22.x)*(p11.y-p12.y) - (p11.x - p12.x)*(p21.y - p22.y)
 
-    if(t1_denominator ==0 || t2_denominator==0){
-        if((p21.y-p11.y)/(p21.x-p11.x) == (p12.y-p11.y)/(p12.x-p11.x)) {//overlap
-            ifin =  true
-            dist = 0
-        }
-        else {
-            dist = Math.sqrt((p21.x-p11.x)^2 + (p21.y-p11.y)^2)
-        }
-    }
-    else{
-        let t1 = (p11.x-p21.x)*(p21.y-p22.y) - (p21.x - p22.x)*(p11.y - p21.y)/t1_denominator
-        let t2 = (p21.x-p11.x)*(p11.y-p12.y) - (p11.x - p12.x)*(p21.y - p11.y)/t2_denominator
-        if(t1>=0 && t1 <=1 && t2>=0 && t2<=1){
-            ifin = true  
-            dist = 0
-        }
-        else{
-            d = pointToLine(p11,p21,p22)
-            if(d < dist){
-                dist = d
-            }
-            d = pointToLine(p12,p21,p22)
-            if(d < dist){
-                dist = d
-            }
-            d = pointToLine(p21,p11,p12)
-            if(d < dist){
-                dist = d
-            }
-            d = pointToLine(p22,p11,p12)
-            if(d < dist){
-                dist = d
-            }
-        }
-    }
-    return [ifin,dist]
-}
 
 export interface mypoint {
     x: number;

@@ -70,13 +70,10 @@ reset.addEventListener('click', resetAll)
 
   function onClickln(e)
   {
-
     linepoint.push([e.latlng.lat,e.latlng.lng])
-      lines.addLatLng(e.latlng)
-      mymap.addLayer(lines)
-      mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
-      lineresult=linepoint
-      console.log("lineresult:"+lineresult, lineresult.length)
+    lines.addLatLng(e.latlng)
+    mymap.addLayer(lines)
+    mymap.addLayer(L.circle(e.latlng,{color:'#ff0000',fillColor:'ff0000',fillOpacity:1}))
       // mymap.on('mousemove',onMoveln)
   }
   // function onMoveln(e) {
@@ -90,13 +87,15 @@ reset.addEventListener('click', resetAll)
 
   function onDoubleClickln(e)
   {
-      L.polyline(linepoint).addTo(mymap)
-      // lineresult.push(linepoint)
-      // console.log(lineresult[1].x,lineresult[1].y, lineresult.length)
-      linepoint=[]
-      lines= L.polyline(linepoint)
-      mymap.removeEventListener('click', onClickln)
-      // mymap.off('mousemove')
+
+    L.polyline(linepoint).addTo(mymap)
+    linepoint.pop()
+    lineresult.push(linepoint)
+    console.log(lineresult, lineresult.length)
+    linepoint=[]
+    lines= L.polyline(linepoint)
+//     mymap.removeEventListener('click', onClickln)
+    // mymap.off('mousemove')
   }
 // line end
  // add polygon -- success
@@ -124,8 +123,9 @@ reset.addEventListener('click', resetAll)
   function onDoubleClickPolygon(e)
   {
       L.polygon(polygonpoint).addTo(mymap)
-      polygonresult = polygonpoint
-      console.log("polygonresult"+polygonpoint)
+      polygonpoint.pop()
+      polygonresult.push(polygonpoint)
+      console.log("polygonresult"+polygonresult,polygonresult.length)
       polygonpoint=[]
       polygonline.remove()
       tempLines.remove()
@@ -159,8 +159,9 @@ function addLine(){
   mymap.removeEventListener('dblclick',onDoubleClickPolygon);
   mymap.removeEventListener('mousemove',onMovePolygon);
   mymap.removeEventListener('click', onMapClickPoint);
+  // mymap.removeEventListener('dbclick', onDoubleClickln);
   mymap.addEventListener('click', onClickln); 
-  mymap.addEventListener('dbclick', onDoubleClickln);
+  mymap.addEventListener('dblclick', onDoubleClickln);
   element1.style.backgroundColor="red";
   element2.style.backgroundColor="green";
   element3.style.backgroundColor="red";
@@ -185,10 +186,10 @@ function resetAll(){
 function pointLine(){
   let p0:mypoint = {x:point[0][0],y:point[0][1]}
   console.log("p0:"+p0.x,p0.y)
-  let p1:mypoint = {x:linepoint[0][0],y:linepoint[0][1]}
-  let p2:mypoint = {x:linepoint[1][0],y:linepoint[1][1]}
-  console.log("p1:"+p1.x,p1.y)
-  console.log("p2:"+p2.x,p2.y)
+  let p1:mypoint = {x:lineresult[0][0][0],y:lineresult[0][0][1]}
+  let p2:mypoint = {x:lineresult[0][1][0],y:lineresult[0][1][1]}
+  console.log("point on line:"+p1.x,p1.y)
+  console.log("point on line::"+p2.x,p2.y)
   let d = pointToLine(p0,p1,p2)
   console.log("distance between the point and the line is:" + d);
 }
@@ -202,16 +203,18 @@ function pointPolygon(){
   let p0:mypoint = {x:point[0][0],y:point[0][1]}
   console.log("p0:"+p0.x,p0.y)
   for(let i = 0;i < ls2.length;i++){
-    pl.push({x:ls2[i][0],y:ls2[i][1]})
-    console.log("pogon:"+{x:ls2[i][0],y:ls2[i][1]})
+    pl.push({x:ls2[i][0],y:ls2[i][1]})  
   }
+  console.log("polyggon:"+pl)
   let d = pointInPolygon(p0,pl)
-  console.log("relationship between a point and a polygon:");
+  // console.log("relationship between a point and a polygon:");
   if(d[0] == false){
-    console.log("outside, the distance is:"+d[1])
+    console.log("relationship between a point and a polygon: outside")
+    // console.log("the distance is:"+d.dist)
   }
   else {
-    console.log("inside, the distance is:"+d[1])
+    console.log("relationship between a point and a polygon: inside")
+    // console.log("the distance is:"+d.dist)
   }
 
 }
@@ -223,19 +226,15 @@ function pointPolygon(){
   function polygonPolygon(){
     let pl1: Array<mypoint> = []
     let pl2: Array<mypoint> = []
-    for(let i = 0;i < polygonresult[0].length-1;i++){
-      // pl1.push({x:polygonresult[0][i][0],y:polygonresult[0][i][1]})
-      console.log("pl1"+pl1)
+    for(let i = 0;i < polygonresult[0].length;i++){
+      pl1.push({x:polygonresult[0][i][0],y:polygonresult[0][i][1]})
+//       console.log("pl1"+pl1[i])
     }
-    if(polygonresult.length>1){
-      for(let i = 0;i < polygonresult[1].length-1;i++){
+   
+    for(let i = 0;i < polygonresult[1].length;i++){
         pl2.push({x:polygonresult[1][i][0],y:polygonresult[1][i][1]})
-        // console.log("pl2"+polygonresult[1][i][0],polygonresult[1][i][1])
+//         console.log("pl2"+pl2[i][0],pl2[i][1])
       }
-    }
-    else {
-      console.log("no second polygon")
-    }
     let flag:boolean = polygonAndPolygon(pl1,pl2)
     if(flag == true){
       console.log("relationship between two polygon: intersect.")
@@ -257,8 +256,8 @@ function pointPolygon(){
     p21 = {x:lineresult[1][0][0],y:lineresult[1][0][1]}
     p22 = {x:lineresult[1][1][0],y:lineresult[1][1][1]}
     let d = lineAndLine(p11,p12,p21,p22)
-    console.log("if two line intersect:" + d[0])
-    console.log("distance: "+d[1])
+    console.log("if two line intersect:" + d.ifin)
+    // console.log("distance: "+d.dist)
   }
   var element7  = document.getElementById ('lineLineCompare');
   element7.addEventListener ('click', lineLine);
@@ -273,8 +272,8 @@ function pointPolygon(){
   element8.addEventListener ('click', pointPoint);
 
   function linePolygon(){
-    let p1:mypoint = {x:ls1[0][0],y:ls1[0][1]}
-    let p2:mypoint = {x:ls1[1][0],y:ls1[1][1]}
+    let p1:mypoint = {x:lineresult[0][0][0],y:lineresult[0][0][1]}
+    let p2:mypoint = {x:lineresult[0][1][0],y:lineresult[0][1][1]}
     let pl1: Array<mypoint> = []
     for(let i = 0;i < polygonresult[0].length;i++){
       pl1.push({x:polygonresult[0][i][0],y:polygonresult[0][i][1]})
