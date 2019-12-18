@@ -125,7 +125,7 @@ reset.addEventListener('click', resetAll)
       L.polygon(polygonpoint).addTo(mymap)
       polygonpoint.pop()
       polygonresult.push(polygonpoint)
-      // console.log("polygonresult"+polygonresult,polygonresult.length)
+//       console.log("polygonresult"+polygonresult,polygonresult.length)
       polygonpoint=[]
       polygonline.remove()
       tempLines.remove()
@@ -202,19 +202,19 @@ function pointPolygon(){
   let pl: Array<mypoint> = []
   let p0:mypoint = {x:point[0][0],y:point[0][1]}
   // console.log("p0:"+p0.x,p0.y)
-  for(let i = 0;i < ls2.length;i++){
-    pl.push({x:ls2[i][0],y:ls2[i][1]})  
+  for(let i = 0;i < polygonresult[0].length; i++){
+    pl.push({x:polygonresult[0][i][0],y:polygonresult[0][i][1]})  
   }
-  // console.log("polyggon:"+pl)
+//   console.log("polyggon:"+pl)
   let d = pointInPolygon(p0,pl)
   // console.log("relationship between a point and a polygon:");
   if(d.ifin == false){
     console.log("relationship between a point and a polygon: outside")
-    // console.log("the distance is:"+d.dist)
+    console.log("the distance is:"+d.dist)
   }
   else {
     console.log("relationship between a point and a polygon: inside")
-    // console.log("the distance is:"+d.dist)
+    console.log("the distance is:"+d.dist)
   }
 
 }
@@ -257,7 +257,7 @@ function pointPolygon(){
     p22 = {x:lineresult[1][1][0],y:lineresult[1][1][1]}
     let d = lineAndLine(p11,p12,p21,p22)
     console.log("if two line intersect:" + d.ifin)
-    // console.log("distance: "+d.dist)
+    console.log("distance: "+d.dist)
   }
   var element7  = document.getElementById ('lineLineCompare');
   element7.addEventListener ('click', lineLine);

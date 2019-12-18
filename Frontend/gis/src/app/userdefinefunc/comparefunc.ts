@@ -104,12 +104,13 @@ export function pointInPolygon(p0:mypoint, pl:mypointarray){
     for(var i=0; i < pl.length-1; i++){
         // ray line intersect
         let d1 = lineAndLine(p0,p0_prime, pl[i],pl[i+1])
-        let distance:number = d1.dist
-        // console.log("d1,",d1.ifin)
+        let d2 = pointToLine(p0,pl[i],pl[i+1])
+//         let distance:number = d2
+        // console.log("d2,",d2.ifin)
         if( d1.ifin== true ){
                 count++
-                if(dist > distance){
-                    dist = distance
+                if(dist > d2){
+                    dist = d2
                 } 
             } 
     }
